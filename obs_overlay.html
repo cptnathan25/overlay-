@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Void Azul — Overlay animado para OBS</title>
+  <style>
+    :root { color-scheme: dark; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: transparent !important; }
+    .canvas { position: relative; width: 100vw; height: 100vh; overflow: hidden; background: transparent; isolation: isolate; }
+    .art { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; pointer-events: none; }
+    .aura { position: absolute; pointer-events: none; border-radius: 50%; filter: blur(18px); opacity: .34; animation: breathe 9s ease-in-out infinite alternate; }
+    .aura--left { left: -6%; top: -9%; width: 30%; height: 42%; background: radial-gradient(ellipse, rgba(0, 94, 255, .16), rgba(0, 79, 211, .075) 34%, transparent 68%); }
+    .aura--right { right: -7%; top: -8%; width: 24%; height: 32%; background: radial-gradient(ellipse, rgba(0, 136, 255, .18), rgba(0, 87, 202, .08) 32%, transparent 67%); animation-delay: -4.5s; }
+    .aura--bottom { left: -6%; bottom: -11%; width: 32%; height: 35%; background: radial-gradient(ellipse, rgba(0, 70, 224, .13), transparent 66%); animation-delay: -2s; }
+    .filaments { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+    .filament { fill: none; stroke: url(#voidLight); stroke-linecap: round; filter: url(#softGlow); }
+    .filament--long { stroke-width: 3.2; stroke-dasharray: 75 3400; animation: current-long 14s linear infinite; opacity: .68; }
+    .filament--long.second { animation-delay: -7s; opacity: .43; }
+    .filament--right { stroke-width: 2.5; stroke-dasharray: 44 1350; animation: current-short 10s linear infinite; opacity: .53; animation-delay: -3s; }
+    .filament--camera { stroke-width: 3.5; stroke-dasharray: 58 1150; animation: current-camera 8s linear infinite; opacity: .7; }
+    .filament--camera.bottom { animation-delay: -4s; opacity: .47; }
+    .sparks { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .spark { position: absolute; width: clamp(1px, .12vw, 4px); height: clamp(1px, .12vw, 4px); border-radius: 50%; background: #9ae9ff; box-shadow: 0 0 5px 1px rgba(43, 188, 255, .62), 0 0 14px 3px rgba(10, 96, 255, .37); opacity: 0; animation: drift var(--duration) ease-in-out var(--delay) infinite; }
+    @keyframes breathe { from { opacity: .15; transform: scale(.9); } to { opacity: .42; transform: scale(1.11); } }
+    @keyframes current-long { from { stroke-dashoffset: 3500; } to { stroke-dashoffset: 0; } }
+    @keyframes current-short { from { stroke-dashoffset: 1400; } to { stroke-dashoffset: 0; } }
+    @keyframes current-camera { from { stroke-dashoffset: 1200; } to { stroke-dashoffset: 0; } }
+    @keyframes drift { 0%, 100% { opacity: 0; transform: translate3d(0, 9px, 0) scale(.55); } 35% { opacity: .55; } 65% { opacity: .8; transform: translate3d(5px, -8px, 0) scale(1); } 90% { opacity: 0; transform: translate3d(8px, -17px, 0) scale(.6); } }
+    @media (prefers-reduced-motion: reduce) { .aura, .filament, .spark { animation: none !important; } .spark { opacity: .4; } }
+  </style>
+</head>
+<body>
+  <main class="canvas" aria-label="Overlay Sylvanas Void Azul com centro e webcam transparentes">
+    <img class="art" src="./overlay_sylvanas_void_4k.png" alt="" draggable="false">
+    <div class="aura aura--left"></div><div class="aura aura--right"></div><div class="aura aura--bottom"></div>
+    <svg class="filaments" viewBox="0 0 3840 2160" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="voidLight" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#1265ff" stop-opacity="0"/><stop offset=".32" stop-color="#267efc" stop-opacity=".65"/><stop offset=".55" stop-color="#a1f6ff" stop-opacity=".96"/><stop offset=".77" stop-color="#138de9" stop-opacity=".65"/><stop offset="1" stop-color="#0646af" stop-opacity="0"/></linearGradient>
+        <filter id="softGlow" x="-50%" y="-300%" width="200%" height="700%"><feGaussianBlur in="SourceGraphic" stdDeviation="3.4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <path class="filament filament--long" d="M 620 23 C 1220 18, 2520 18, 3270 23"/>
+      <path class="filament filament--long second" d="M 850 2139 C 1460 2144, 2490 2143, 3350 2137"/>
+      <path class="filament filament--right" d="M 3812 325 C 3816 605, 3814 927, 3812 1120"/>
+      <path class="filament filament--camera" d="M 2845 1496 C 3110 1492, 3440 1492, 3713 1496"/>
+      <path class="filament filament--camera bottom" d="M 2845 2016 C 3090 2020, 3460 2020, 3710 2016"/>
+    </svg>
+    <div class="sparks" aria-hidden="true"></div>
+  </main>
+  <script>
+    // Fixed-seed particles: sparse and strictly peripheral; no animation over gameplay.
+    let seed = 2705;
+    const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+    const container = document.querySelector('.sparks');
+    for (let i = 0; i < 33; i++) {
+      let x, y;
+      switch (i % 4) {
+        case 0: x = random() * 18; y = 6 + random() * 88; break;
+        case 1: x = 20 + random() * 77; y = random() * 5; break;
+        case 2: x = 5 + random() * 90; y = 95 + random() * 4; break;
+        default: x = 95 + random() * 4; y = 12 + random() * 82;
+      }
+      const dot = document.createElement('i');
+      dot.className = 'spark';
+      dot.style.left = x.toFixed(2) + '%';
+      dot.style.top = y.toFixed(2) + '%';
+      dot.style.setProperty('--duration', (3.5 + random() * 5.5).toFixed(2) + 's');
+      dot.style.setProperty('--delay', (-random() * 12).toFixed(2) + 's');
+      dot.style.opacity = '.25';
+      container.appendChild(dot);
+    }
+  </script>
+</body>
+</html>
