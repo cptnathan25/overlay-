@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#060b17">
+  <title>Void Azul — Identidade para Live</title>
+  <meta name="description" content="Prévia do overlay profissional Sylvanas + Void Azul em 4K, com gameplay transparente, webcam modular e opção animada para OBS.">
+  <style>
+    :root { --bg:#060b17; --surface:#0c1424; --surface-2:#101c30; --edge:#26384f; --muted:#96a9c4; --white:#edf5ff; --cyan:#78ddff; --blue:#428fff; }
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:radial-gradient(ellipse 60% 30% at 8% 3%,rgba(14,75,185,.16),transparent 75%),radial-gradient(ellipse 40% 28% at 100% 35%,rgba(0,74,184,.09),transparent 75%),var(--bg);color:var(--white);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+    body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.2;background-image:linear-gradient(rgba(94,152,240,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(94,152,240,.025) 1px,transparent 1px);background-size:60px 60px;mask-image:linear-gradient(to bottom,black,transparent 70%)}
+    button,a{font:inherit}
+    a{color:inherit;text-decoration:none}
+    button{cursor:pointer}
+    .container{width:min(1340px,calc(100% - 64px));margin:auto}
+    .topbar{position:relative;z-index:2;border-bottom:1px solid rgba(110,159,225,.13);background:rgba(5,11,23,.68);backdrop-filter:blur(20px)}
+    .topbar-inner{height:72px;display:flex;align-items:center;justify-content:space-between;gap:28px}
+    .brand{display:flex;align-items:center;gap:13px;white-space:nowrap}
+    .brand-mark{width:34px;height:41px;filter:drop-shadow(0 0 12px rgba(33,133,255,.7))}
+    .brand-word{display:flex;flex-direction:column;line-height:1.05}
+    .brand-word strong{font-size:15px;letter-spacing:.19em;font-weight:750}
+    .brand-word small{color:#72a7e6;font-size:9px;letter-spacing:.3em;margin-top:5px;font-weight:650}
+    .nav{display:flex;align-items:center;gap:33px;color:#9fb2ce;font-size:12px;font-weight:650;letter-spacing:.035em}
+    .nav a:hover{color:#e6f7ff}
+    .nav .nav-cta{border:1px solid #397bb8;background:linear-gradient(140deg,rgba(33,89,183,.42),rgba(14,45,100,.25));color:#e6f6ff;padding:10px 16px;border-radius:8px;box-shadow:inset 0 1px rgba(172,223,255,.15)}
+    .intro{display:flex;align-items:end;justify-content:space-between;gap:30px;padding:48px 0 32px}
+    .eyebrow{display:flex;align-items:center;gap:12px;color:var(--cyan);letter-spacing:.24em;font-size:10px;font-weight:800;text-transform:uppercase}
+    .eyebrow::before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--blue),var(--cyan));box-shadow:0 0 9px var(--blue)}
+    h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(37px,4.4vw,65px);font-weight:400;line-height:1.04;letter-spacing:-.043em;max-width:720px;margin:19px 0 0}
+    h1 em{color:#88cfff;font-style:normal;text-shadow:0 0 28px rgba(31,112,247,.25)}
+    .intro-copy{max-width:342px;margin:0 0 4px;color:#a9bbd1;font-size:14px;line-height:1.75}
+    .stage-shell{position:relative;padding:7px;background:linear-gradient(125deg,#486f9c 0%,#1e334e 15%,#14243c 52%,#365e94 100%);border-radius:17px;box-shadow:0 42px 110px rgba(0,0,0,.54),0 0 62px rgba(20,87,195,.14)}
+    .stage-shell::before{content:"";position:absolute;left:15%;right:15%;top:-1px;height:1px;background:linear-gradient(90deg,transparent,#81d8ff,transparent);box-shadow:0 0 18px #1386ff}
+    .stage{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:11px;background-color:#121d2e;background-image:url("./assets/demo_gameplay.jpg");background-position:center;background-size:cover;isolation:isolate}
+    .stage.checker{background-image:conic-gradient(#38465d 25%,#243247 0 50%,#38465d 0 75%,#243247 0);background-size:64px 64px}
+    .stage.plain{background-image:linear-gradient(125deg,#243850,#42566d 52%,#1c304b)}
+    .stage::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(3,7,14,.08),transparent 25%);pointer-events:none;z-index:0}
+    .stage>img,.stage>iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;z-index:2}
+    .stage>iframe{display:none;background:transparent}
+    .stage.motion>iframe{display:block}
+    .stage.motion>.static-art{display:none}
+    .camera-sample{position:absolute;z-index:1;left:75.42%;top:70.95%;width:21%;height:21.2%;overflow:hidden;border-radius:5%;display:none;background:radial-gradient(ellipse at 48% 30%,#36577c 0%,#1b314c 28%,#101b2e 65%,#071020 100%)}
+    .camera-sample::before{content:"";position:absolute;left:40%;top:17%;width:21%;height:35%;border-radius:45% 45% 42% 42%;background:linear-gradient(110deg,#202f45,#09111e);box-shadow:0 3px 22px rgba(34,119,240,.14)}
+    .camera-sample::after{content:"";position:absolute;left:25%;top:49%;width:52%;height:76%;border-radius:46% 46% 0 0;background:linear-gradient(95deg,#152438,#080f1d 75%);box-shadow:0 -8px 34px rgba(45,133,249,.16)}
+    .stage.has-camera .camera-sample{display:block}
+    .stage-caption{display:flex;align-items:center;gap:12px;color:#91a7c2;letter-spacing:.15em;font-size:10px;font-weight:700;text-transform:uppercase;margin:17px 0 0}
+    .stage-caption .pulse{width:6px;height:6px;border-radius:50%;background:#40c8ff;box-shadow:0 0 11px #2c93ff}
+    .stage-caption .right{margin-left:auto;color:#6481a7}
+    .toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:17px;margin-top:26px}
+    .segmented{display:flex;gap:4px;padding:4px;border:1px solid #253c58;background:rgba(15,29,49,.85);border-radius:10px}
+    .segmented button{border:0;border-radius:7px;background:transparent;color:#a5b8d2;padding:11px 15px;font-size:12px;font-weight:650;transition:background .2s,color .2s,box-shadow .2s}
+    .segmented button:hover{color:white}
+    .segmented button.active{background:#213d65;color:#eefaff;box-shadow:inset 0 1px rgba(181,226,255,.14),0 1px 10px rgba(0,0,0,.15)}
+    .switches{display:flex;align-items:center;gap:22px}
+    .toggle{display:flex;align-items:center;gap:10px;border:0;background:transparent;color:#aebfd4;font-size:12px;font-weight:620;padding:7px 0}
+    .toggle .track{position:relative;width:34px;height:19px;border:1px solid #385474;background:#182840;border-radius:30px;transition:background .2s}
+    .toggle .track::after{content:"";position:absolute;left:3px;top:3px;width:11px;height:11px;border-radius:50%;background:#7992b0;transition:transform .2s,background .2s}
+    .toggle[aria-pressed="true"] .track{background:#1c6ba8;border-color:#47b4ef;box-shadow:0 0 10px rgba(27,142,239,.24)}
+    .toggle[aria-pressed="true"] .track::after{transform:translateX(15px);background:#dcfaff}
+    .section-heading{margin:72px 0 21px;display:flex;align-items:baseline;justify-content:space-between;gap:18px}
+    .section-heading h2{font-family:Georgia,"Times New Roman",serif;font-size:30px;font-weight:400;letter-spacing:-.025em;margin:0}
+    .section-heading p{color:#839dbb;font-size:12px;margin:0}
+    .downloads{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .download-card{display:flex;flex-direction:column;min-height:194px;padding:24px;border:1px solid #263a56;border-radius:13px;background:linear-gradient(138deg,rgba(23,42,70,.84),rgba(8,19,35,.92));box-shadow:inset 0 1px rgba(174,220,255,.045);transition:transform .25s,border-color .25s,background .25s}
+    .download-card:hover{transform:translateY(-3px);border-color:#437caf;background:linear-gradient(138deg,rgba(27,54,90,.9),rgba(8,22,43,.95))}
+    .download-card .icon{font-size:21px;color:#87d8ff;line-height:1;margin-bottom:19px;text-shadow:0 0 18px rgba(17,155,255,.6)}
+    .download-card strong{font-size:15px;letter-spacing:.01em}
+    .download-card p{font-size:12px;color:#9aafc9;line-height:1.6;margin:8px 0 18px}
+    .download-card a{display:inline-flex;align-items:center;gap:8px;margin-top:auto;color:#9ddaff;font-size:12px;font-weight:750}
+    .download-card a:hover{color:#e0f8ff}
+    .specs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:15px 0 75px}
+    .spec{padding:19px 21px;border-left:2px solid #31669e;background:rgba(18,34,56,.5)}
+    .spec span{display:block;color:#72a8db;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;margin-bottom:7px}
+    .spec strong{font-size:13px;font-weight:600;color:#dbe9f9}
+    .how{display:grid;grid-template-columns:1.1fr 1fr;gap:45px;padding:36px 0 56px;border-top:1px solid #223650}
+    .how h2{font-family:Georgia,"Times New Roman",serif;font-size:30px;font-weight:400;line-height:1.2;margin:15px 0}
+    .how p{font-size:13px;line-height:1.8;color:#9cb0c8;max-width:500px}
+    .how ol{counter-reset:steps;list-style:none;margin:0;padding:0;display:grid;gap:13px}
+    .how li{display:flex;gap:16px;align-items:start;font-size:13px;color:#a9bfd9;line-height:1.55}
+    .how li::before{counter-increment:steps;content:"0" counter(steps);flex:none;color:#8bd4ff;font-size:12px;font-weight:800;letter-spacing:.07em;padding-top:1px}
+    .how li b{color:#e8f3ff;font-weight:650}
+    .footer{border-top:1px solid #1b2d47;color:#6f86a3;font-size:11px;line-height:1.6;padding:24px 0 34px;display:flex;justify-content:space-between;gap:25px}
+    .footer a{color:#aacff1}
+    @media(max-width:850px){.intro{align-items:start;flex-direction:column;padding:37px 0 28px;gap:17px}.intro-copy{max-width:590px}.downloads{grid-template-columns:1fr 1fr}.how{grid-template-columns:1fr;gap:15px}.nav a:not(.nav-cta){display:none}}
+    @media(max-width:600px){.container{width:min(100% - 32px,520px)}.topbar-inner{height:65px}.brand-word strong{font-size:13px}.nav .nav-cta{padding:9px 12px;font-size:11px}h1{font-size:37px}.intro{padding:34px 0 22px}.stage-shell{padding:4px;border-radius:10px}.stage{border-radius:6px}.stage-caption{font-size:8px;gap:8px}.stage-caption .right{display:none}.toolbar{align-items:stretch;gap:10px}.segmented{width:100%;justify-content:space-between}.segmented button{flex:1;padding:10px 5px;font-size:11px}.switches{width:100%;justify-content:space-between}.toggle{font-size:11px}.section-heading{margin-top:53px}.section-heading h2{font-size:27px}.section-heading p{display:none}.downloads{grid-template-columns:1fr}.download-card{min-height:155px}.specs{grid-template-columns:1fr;margin-bottom:50px}.how{padding-top:20px}.footer{display:block}.footer span{display:block;margin-bottom:8px}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="#top" aria-label="Void Azul — início">
+        <svg class="brand-mark" viewBox="0 0 34 41" fill="none" aria-hidden="true"><path d="M17 1 31 20.5 17 40 3 20.5 17 1Z" fill="#071c3a" stroke="#5db9f7" stroke-width="1.2"/><path d="M17 7 26 20.5 17 34 8 20.5 17 7Z" fill="#1058bd" stroke="#92ebff" stroke-width=".8"/><path d="M17 10v21M10 21h14" stroke="#a7f1ff" stroke-width=".75" opacity=".7"/></svg>
+        <span class="brand-word"><strong>VOID AZUL</strong><small>STREAM IDENTITY</small></span>
+      </a>
+      <nav class="nav" aria-label="Navegação principal"><a href="#preview">Prévia</a><a href="#arquivos">Arquivos</a><a href="#como-usar">Como usar</a><a class="nav-cta" href="./pacote_void_azul_stream.zip" download>Baixar pacote ↓</a></nav>
+    </div>
+  </header>
+
+  <main class="container" id="top">
+    <section class="intro" aria-labelledby="headline"><div><div class="eyebrow">Arte de live · edição 4K</div><h1 id="headline">O jogo em primeiro plano.<br><em>O Void nas bordas.</em></h1></div><p class="intro-copy">Sylvanas, metal élfico e energia azul-cobalto em uma moldura refinada. O centro pertence à gameplay; a identidade fica nas extremidades.</p></section>
+
+    <section id="preview" aria-label="Prévia interativa do overlay">
+      <div class="stage-shell"><div class="stage" id="stage">
+        <div class="camera-sample" aria-hidden="true"></div>
+        <img class="static-art" src="./overlay_sylvanas_void_4k.png" alt="Overlay Void Azul com Sylvanas à esquerda e moldura de webcam no canto inferior direito" draggable="false">
+        <iframe title="Prévia da versão animada do overlay" src="./obs_overlay.html" loading="eager" tabindex="-1" aria-hidden="true"></iframe>
+      </div></div>
+      <div class="stage-caption"><i class="pulse"></i><span>Visualização em tempo real</span><span class="right">16:9 · 3840 × 2160 · PNG com transparência</span></div>
+      <div class="toolbar"><div class="segmented" role="group" aria-label="Fundo da prévia"><button class="active" data-background="game" aria-pressed="true">Sobre gameplay</button><button data-background="checker" aria-pressed="false">Transparência</button><button data-background="plain" aria-pressed="false">Fundo claro</button></div><div class="switches"><button class="toggle" id="motionToggle" aria-pressed="true"><span class="track"></span>Animação sutil</button><button class="toggle" id="cameraToggle" aria-pressed="false"><span class="track"></span>Simular webcam</button></div></div>
+    </section>
+
+    <section id="arquivos" aria-labelledby="files-title"><div class="section-heading"><h2 id="files-title">Um visual. Duas formas de usar.</h2><p>Arquivos prontos para OBS Studio e Streamlabs</p></div>
+      <div class="downloads">
+        <article class="download-card"><span class="icon" aria-hidden="true">✦</span><strong>Overlay completo · PNG 4K</strong><p>Moldura principal com centro e webcam transparentes. Mais leve e simples de instalar.</p><a href="./overlay_sylvanas_void_4k.png" download>Baixar PNG 4K <span aria-hidden="true">↗</span></a></article>
+        <article class="download-card"><span class="icon" aria-hidden="true">◇</span><strong>Webcam avulsa · PNG</strong><p>O mesmo ornamento em uma peça independente, para reposicionar ou usar em outras cenas.</p><a href="./webcam_void_azul.png" download>Baixar moldura <span aria-hidden="true">↗</span></a></article>
+        <article class="download-card"><span class="icon" aria-hidden="true">✧</span><strong>Movimento sutil · OBS</strong><p>Filamentos e partículas nas bordas, sem animação no centro da gameplay.</p><a href="./pacote_void_azul_stream.zip" download>Baixar pacote animado <span aria-hidden="true">↗</span></a></article>
+      </div>
+      <div class="specs"><div class="spec"><span>Paleta</span><strong>Preto · cobalto · azul elétrico · ciano</strong></div><div class="spec"><span>Composição</span><strong>Centro livre; personagem periférica</strong></div><div class="spec"><span>Formato</span><strong>16:9 · 4K · canal alfa real</strong></div></div>
+    </section>
+
+    <section class="how" id="como-usar" aria-labelledby="setup-title"><div><div class="eyebrow">Instalação em minutos</div><h2 id="setup-title">Pronto para entrar em cena.</h2><p>O PNG funciona sozinho. Para o efeito animado, mantenha o HTML e o PNG na mesma pasta e use uma Fonte de navegador no OBS. Nenhum plugin, conta ou serviço externo é necessário.</p></div><ol><li><span>Crie uma cena <b>16:9</b> no OBS (3840 × 2160 ou 1920 × 1080).</span></li><li><span>Posicione <b>captura de jogo</b> e <b>webcam</b> abaixo do overlay. Em 4K, o espaço da câmera começa em aproximadamente X 2896 / Y 1531 e mede 806 × 460 px.</span></li><li><span>Use o <b>PNG como Fonte de imagem</b> ou o arquivo <b>obs_overlay.html como Fonte de navegador</b>, em cima das outras fontes. Não use ambos juntos.</span></li></ol></section>
+  </main>
+  <footer class="container footer"><span>Prévia de gameplay meramente demonstrativa; somente o overlay e a moldura de webcam integram os arquivos de stream.</span><span>Arte independente inspirada no universo solicitado. Não é material oficial da Blizzard nem da OWN3D.</span></footer>
+  <script>
+    const stage = document.getElementById('stage');
+    const motionToggle = document.getElementById('motionToggle');
+    const motionFrame = stage.querySelector('iframe');
+    let motionReady = false;
+    const showMotionWhenReady = () => {
+      motionReady = true;
+      if (motionToggle.getAttribute('aria-pressed') === 'true') stage.classList.add('motion');
+    };
+    motionFrame.addEventListener('load', showMotionWhenReady);
+    if (motionFrame.contentDocument?.readyState === 'complete') showMotionWhenReady();
+    document.querySelectorAll('[data-background]').forEach(button => button.addEventListener('click', () => {
+      document.querySelectorAll('[data-background]').forEach(el => { el.classList.remove('active'); el.setAttribute('aria-pressed', 'false'); });
+      button.classList.add('active'); button.setAttribute('aria-pressed', 'true');
+      stage.classList.remove('checker', 'plain');
+      if (button.dataset.background !== 'game') stage.classList.add(button.dataset.background);
+    }));
+    document.getElementById('motionToggle').addEventListener('click', e => {
+      const button = e.currentTarget;
+      const active = button.getAttribute('aria-pressed') !== 'true';
+      button.setAttribute('aria-pressed', String(active));
+      stage.classList.toggle('motion', active && motionReady);
+    });
+    document.getElementById('cameraToggle').addEventListener('click', e => {
+      const button = e.currentTarget;
+      const active = button.getAttribute('aria-pressed') !== 'true';
+      button.setAttribute('aria-pressed', String(active));
+      stage.classList.toggle('has-camera', active);
+    });
+  </script>
+</body>
+</html>
